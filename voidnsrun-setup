@@ -14,7 +14,7 @@ function determine_arch {
 
 # Get Void main mirror in use and adapt it to use $container_type instead of musl.
 function get_target_repo {
-    # Determine if a different mirror than default is configured, and if it's correct, use it insted of default.
+    # Determine if a different mirror than default is configured, and if it's correct, use it instead of default.
     if [ ! -d /etc/xbps.d/00-repository-main.conf ]; then
         mainrepofile="/usr/share/xbps.d/00-repository-main.conf"
     else
@@ -106,8 +106,9 @@ container_path="/$container_type"
 get_cereus_repo
 
 if [ ! -d "/$container_type" ]; then
-    echo "==> Creating container path
-"
+    echo "
+==> Creating container path"
+
     mkdir -p /$container_type/${repokeys_dir}
     echo "==> Copying repositories keys...
 "
@@ -131,13 +132,12 @@ fi
 echo "==> Configuring extra repository and voidnsundo
 "
 echo $container_path
-# If the target arch is x86_64-musl, it will use xchroot instead of voidnsrun.
-# This is because, for some reason, there is a bug that will cause '-' flags don't work.
+# Please note that, if the host is x86_64 or some reason, there is a bug that will cause '-' flags don't work.
 
 if [ "$target_arch" = "x86_64-musl" ]; then
     xchroot $container_path xbps-install -Syf --repository=$cereus_extra voidnsundo cereus-repo-extra
 else
-    voidnsrun -r $container_path xbps-install -Syf --repository=$cereus_extra voidnsundo cereus-repo-extra
+    xchroot $container_path xbps-install -Syf --repository=$cereus_extra voidnsundo cereus-repo-extra
 fi
 
 # If the host machine is running Cereus Linux, then also add the cereus-core repository
